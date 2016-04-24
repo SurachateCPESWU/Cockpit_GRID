@@ -1,0 +1,27 @@
+void setup() {
+  Serial.begin(250000);
+  pinMode(11, OUTPUT);
+  digitalWrite(11, 1);
+  Serial.setTimeout(1);
+}
+
+void loop() {
+  String a;
+  float b, c, d;
+  int max_rpm = 7800;
+  d = 0;
+  a = Serial.readString();
+  b = a.toInt();
+  if (d != b) {
+    d = b;
+    while (b > max_rpm) {
+      digitalWrite(11, 0);
+      delay(100);
+      digitalWrite(11, 1);
+      delay(100);
+      a = Serial.readString();
+      b = a.toInt();
+    }
+    digitalWrite(11, 1);
+  }
+}
