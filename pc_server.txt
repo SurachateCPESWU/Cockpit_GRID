@@ -137,6 +137,38 @@ void EnableDebugPriv();
 
 using namespace std;
 
+int FindPointerAddr(HANDLE pHandle,int baseaddr, int pLevel, int offset0 = 0,int offset1 = 0,int offset2 = 0,int offset3 = 0, int offset4 = 0)
+{
+   int Address = baseaddr;
+   int offset = 0;
+   for (int i = 0; i < pLevel; i++)
+   {
+      if (i == 0)
+      {
+         offset = offset0;
+      }
+      else if (i == 1)
+      {
+         offset = offset1;
+      }
+      else if (i == 2)
+      {
+         offset = offset2;
+      }
+      else if (i == 3)
+      {
+         offset = offset3;
+      }
+      else if (i == 4)
+      {
+         offset = offset4;
+      }
+      ReadProcessMemory(pHandle, (LPCVOID)Address, &Address , 4, NULL);
+      Address += offset;
+   }
+   return Address;
+}
+
 int main() {
 	char rpm_val[5];
 	hPort = ConfigureSerialPort("COM3");
@@ -146,7 +178,7 @@ int main() {
         return -1;
     }
     
-	int range = 50;
+	int range = 0;
 	float rpm,old_rpm = 0  ;
 	HWND hwnd = FindWindow(0, "GRID Autosport");
 	DWORD pid;
@@ -158,11 +190,14 @@ int main() {
 		if(!hProcess) {
 			cout << "Error: Can not open process" << endl;
 		} else {
+			int addddd= FindPointerAddr(hProcess,0x400000+0x00fafe9c,5,0x184,0xec,0x684,0x0,0x214);
+			printf("%p",addddd);
 			while(1){
-			if(!ReadProcessMemory(hProcess, (LPVOID)0x071253AC, &rpm, sizeof(rpm), 0)) {
+			if(!ReadProcessMemory(hProcess, (LPVOID)addddd, &rpm, sizeof(rpm), 0)) {
 				cout << "Error: NOT READ" << endl;
 			} else {
 				if(rpm-old_rpm>range||old_rpm-rpm>range){
+					rpm=rpm*1000;
 					snprintf(rpm_val,5,"%f",rpm);
 					WriteString(rpm_val,4);
 					system("cls");
