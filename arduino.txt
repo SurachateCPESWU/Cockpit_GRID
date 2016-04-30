@@ -8,13 +8,13 @@ void setup() {
 void loop() {
   String a;
   float b, c, d;
-  int max_rpm = 7800;
+  int set_m,set_m_bool=1;
   d = 0;
   a = Serial.readString();
   b = a.toInt();
   if (d != b) {
     d = b;
-    while (b > max_rpm) {
+    while (b > 960) {
       digitalWrite(11, 0);
       delay(100);
       digitalWrite(11, 1);
